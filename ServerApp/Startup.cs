@@ -23,10 +23,12 @@ namespace ServerApp
         {
             services.AddControllers();
             var path = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\\cards.json";
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                services.AddTransient<IRepository<Book>>(x => new BookRepository<Book>(path));
+                var file = File.Create(path);
+                file.Close();
             }
+            services.AddTransient<IRepository<Book>>(x => new BookRepository<Book>(path));
             services.AddTransient<FileSaverService>(x => new FileSaverService(_currentEnvironment));
         }
 
